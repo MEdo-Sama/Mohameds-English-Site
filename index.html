@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>أكاديمية إتقان الإنجليزية | من A1 إلى B2</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Cairo (Arabic) & Inter (English) -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            arabic: ['Cairo', 'sans-serif'],
+            english: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+    }
+    .en-text {
+      font-family: 'Inter', sans-serif;
+      direction: ltr;
+      text-align: left;
+      unicode-bidi: embed;
+    }
+    .ar-text {
+      font-family: 'Cairo', sans-serif;
+      direction: rtl;
+      text-align: right;
+    }
+    /* Flip Card CSS */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+      transition: transform 0.5s;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+    .flipped {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg sm:text-xl text-indigo-950 dark:text-white leading-tight">أكاديمية إتقان الإنجليزية</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">منهج تفاعلي متكامل (A1 - A2 - B1 - B2)</p>
+        </div>
+      </div>
+
+      <!-- Overall Progress & Controls -->
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 bg-slate-100 dark:bg-slate-700 px-3 py-1.5 rounded-full text-sm">
+          <i class="fa-solid fa-trophy text-amber-500"></i>
+          <span>النقاط: <strong id="userPoints" class="text-indigo-600 dark:text-indigo-400">0</strong></span>
+        </div>
+        <button onclick="resetProgress()" title="إعادة ضبط التقدم" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 text-sm">
+          <i class="fa-solid fa-rotate-right"></i>
+        </button>
+        <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-amber-400 hover:bg-slate-200 transition">
+          <i id="themeIcon" class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Level Selection Bar (CEFR A1 - B2) -->
+  <section class="bg-indigo-900 text-white py-5 shadow-inner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs uppercase tracking-wider bg-indigo-700 px-2.5 py-1 rounded-full text-indigo-200 font-semibold">الإطار الأوروبي المشترك CEFR</span>
+          <h2 id="currentLevelTitle" class="text-xl sm:text-2xl font-extrabold mt-1">المستوى الأول: A1 (مبتدئ)</h2>
+        </div>
+        <div class="grid grid-cols-4 gap-2 sm:gap-3" id="levelButtonsContainer">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Unit Selector -->
+      <div class="mt-5 pt-4 border-t border-indigo-800/80 flex items-center gap-2 overflow-x-auto pb-1" id="unitButtonsContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+
+    <!-- 6 Module Navigation Tabs -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 mb-6" id="moduleTabsContainer">
+      <button onclick="switchTab('vocab')" id="tab-vocab" class="module-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition shadow-sm">
+        <i class="fa-solid fa-book-open"></i>
+        <span>1. الكلمات</span>
+      </button>
+      <button onclick="switchTab('grammar')" id="tab-grammar" class="module-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition shadow-sm">
+        <i class="fa-solid fa-scale-balanced"></i>
+        <span>2. القواعد (Grammar)</span>
+      </button>
+      <button onclick="switchTab('listening')" id="tab-listening" class="module-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition shadow-sm">
+        <i class="fa-solid fa-headphones"></i>
+        <span>3. الاستماع (Listen)</span>
+      </button>
+      <button onclick="switchTab('speaking')" id="tab-speaking" class="module-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition shadow-sm">
+        <i class="fa-solid fa-microphone-lines"></i>
+        <span>4. التحدث (Speak)</span>
+      </button>
+      <button onclick="switchTab('writing')" id="tab-writing" class="module-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition shadow-sm">
+        <i class="fa-solid fa-pen-nib"></i>
+        <span>5. الكتابة (Write)</span>
+      </button>
+      <button onclick="switchTab('quiz')" id="tab-quiz" class="module-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition shadow-sm">
+        <i class="fa-solid fa-clipboard-check"></i>
+        <span>6. الاختبار (Test)</span>
+      </button>
+    </div>
+
+    <!-- Dynamic Module Container -->
+    <div id="moduleContentArea" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 sm:p-8 min-h-[480px]">
+      <!-- Populated dynamically via JS -->
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-4 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+      منصة إتقان اللغة الإنجليزية التفاعلية — تدعم النطق الصوتي والتعرف على الكلام لجميع المستويات (A1 - B2)
+    </div>
+  </footer>
+
+  <!-- Complete Curriculum Database & Logic -->
+  <script>
+    // ==========================================
+    // 1. CURRICULUM DATA (A1, A2, B1, B2)
+    // ==========================================
+    const curriculumData = {
+      A1: {
+        code: "A1",
+        nameAr: "المستوى A1 - مبتدئ أول",
+        color: "emerald",
+        units: [
+          {
+            id: "a1_u1",
+            titleAr: "الوحدة 1: التعارف والحياة اليومية",
+            titleEn: "Unit 1: Greetings & Daily Life",
+            vocab: [
+              { en: "Introduce", phonetic: "/ˌɪn.trəˈdjuːs/", pos: "Verb (فعل)", ar: "يُقدّم نفسه / يُعرّف", exEn: "Let me introduce myself.", exAr: "دعني أقدم نفسي." },
+              { en: "Schedule", phonetic: "/ˈʃed.juːl/", pos: "Noun (اسم)", ar: "جدول مواعيد", exEn: "I have a busy schedule today.", exAr: "لدي جدول مواعيد مزدحم اليوم." },
+              { en: "Neighbor", phonetic: "/ˈneɪ.bər/", pos: "Noun (اسم)", ar: "جار", exEn: "Our new neighbor is very polite.", exAr: "جارنا الجديد مهذب للغاية." },
+              { en: "Usually", phonetic: "/ˈjuː.ʒu.ə.li/", pos: "Adverb (ظرف)", ar: "عادةً", exEn: "I usually wake up at seven.", exAr: "أنا أستيقظ عادةً في الساعة السابعة." },
+              { en: "Appointment", phonetic: "/əˈpɔɪnt.mənt/", pos: "Noun (اسم)", ar: "موعد رسمي / طبي", exEn: "She has a doctor's appointment.", exAr: "لديها موعد مع الطبيب." },
+              { en: "Early", phonetic: "/ˈɜː.li/", pos: "Adjective/Adverb (صفة/ظرف)", ar: "مبكراً", exEn: "He always arrives early.", exAr: "هو دائماً يصل مبكراً." }
+            ],
+            grammar: {
+              titleAr: "المضارع البسيط (Present Simple) وأفعال الكينونة",
+              titleEn: "Present Simple Tense",
+              explanationAr: "نستخدم زمن المضارع البسيط للتعبير عن العادات اليومية، الروتين المتكرر، والحقائق الثابتة. مع الضمائر (He, She, It) نضيف حرف (s) أو (es) لنهاية الفعل في الجملة المثبتة، بينما مع (I, We, They, You) يبقى الفعل في المصدر بدون أي إضافات.",
+              formulas: [
+                { typeAr: "الإثبات (Affirmative)", ruleEn: "I / You / We / They + Verb (base) | He / She / It + Verb + s/es" },
+                { typeAr: "النفي (Negative)", ruleEn: "I / You / We / They + do not (don't) + Verb | He / She / It + does not (doesn't) + Verb" },
+                { typeAr: "السؤال (Question)", ruleEn: "Do + (I/you/we/they) + Verb? | Does + (he/she/it) + Verb?" }
+              ],
+              examples: [
+                { en: "I usually drink coffee in the morning.", ar: "أنا عادةً أشرب القهوة في الصباح." },
+                { en: "She works at a big hospital.", ar: "هي تعمل في مستشفى كبير." },
+                { en: "He doesn't wake up late on Mondays.", ar: "هو لا يستيقظ متأخراً أيام الإثنين." },
+                { en: "Do you have an appointment today?", ar: "هل لديك موعد اليوم؟" }
+              ],
+              mistakes: [
+                { wrong: "He don't like tea.", right: "He doesn't like tea.", reasonAr: "مع الضمير المفرد (He) نستخدم doesn't وليس don't." },
+                { wrong: "Does she works here?", right: "Does she work here?", reasonAr: "بعد الفعل المساعد Does يعود الفعل الأساسي للمصدر بدون حرف s." }
+              ]
+            },
+            listening: {
+              titleAr: "حوار صباحي بين جارين",
+              passageEn: "Good morning! Let me introduce myself. My name is Omar, and I am your new neighbor. I usually go to work early at eight o'clock because I have a busy schedule. On Fridays, I don't work, so I spend time with my family.",
+              passageAr: "صباح الخير! دعني أقدم نفسي. اسمي عمر، وأنا جارك الجديد. أنا عادةً أذهب إلى العمل مبكراً في الساعة الثامنة لأن لدي جدول مواعيد مزدحم. في أيام الجمعة أنا لا أعمل، لذلك أقضي الوقت مع عائلتي.",
+              questions: [
+                {
+                  qEn: "Who is Omar?",
+                  qAr: "من هو عمر؟",
+                  options: ["The new doctor", "The new neighbor", "The manager"],
+                  correct: 1
+                },
+                {
+                  qEn: "When does Omar usually go to work?",
+                  qAr: "متى يذهب عمر عادةً إلى العمل؟",
+                  options: ["At seven o'clock", "At eight o'clock", "On Fridays"],
+                  correct: 1
+                }
+              ]
+            },
+            speaking: [
+              { en: "Let me introduce myself to you", ar: "دعني أقدم نفسي لك" },
+              { en: "I usually wake up early every morning", ar: "أنا أستيقظ مبكراً عادةً كل صباح" },
+              { en: "She has an important appointment today", ar: "لديها موعد مهم اليوم" }
+            ],
+            writing: {
+              promptAr: "اكتب فقرة قصيرة (من 3 إلى 4 جمل) تصف فيها روتينك اليومي في الصباح باستخدام زمن المضارع البسيط والكلمات المطلوبة أدناه:",
+              promptEn: "Write a short paragraph (3-4 sentences) about your morning routine using the Present Simple tense.",
+              targetWords: ["usually", "early", "schedule", "introduce"],
+              modelAnswerEn: "Hello, let me introduce myself. My name is Ali. I usually wake up early at six o'clock every day. I have a busy schedule at work, so I drink coffee and leave home at seven."
+            },
+            quiz: [
+              {
+                qAr: "اختر الإجابة الصحيحة لإكمال الجملة:",
+                qEn: "She _______ to work early every day.",
+                options: ["go", "goes", "going", "to go"],
+                correct: 1,
+                explanationAr: "اخترنا (goes) لأن الفاعل مفرد غائب (She) وفي زمن المضارع البسيط نضيف es للفعل."
+              },
+              {
+                qAr: "ما معنى كلمة (Schedule) باللغة العربية؟",
+                qEn: "Choose the correct Arabic translation for: 'Schedule'",
+                options: ["جار", "جدول مواعيد", "يُقدّم نفسه", "مبكراً"],
+                correct: 1,
+                explanationAr: "كلمة Schedule تعني جدول مواعيد."
+              },
+              {
+                qAr: "اختر صيغة النفي الصحيحة للجملة التالية:",
+                qEn: "He _______ have an appointment today.",
+                options: ["don't", "isn't", "doesn't", "not"],
+                correct: 2,
+                explanationAr: "مع الضمير He وفي وجود فعل أساسي في المصدر (have) نستخدم doesn't."
+              },
+              {
+                qAr: "اختر الكلمة المناسبة لإكمال المعنى:",
+                qEn: "Our new _______ lives in the apartment next door.",
+                options: ["neighbor", "schedule", "usually", "early"],
+                correct: 0,
+                explanationAr: "الشخص الذي يسكن في الشقة المجاورة هو الجار (neighbor)."
+              }
+            ]
+          },
+          {
+            id: "a1_u2",
+            titleAr: "الوحدة 2: التسوق والأماكن",
+            titleEn: "Unit 2: Shopping & Places",
+            vocab: [
+              { en: "Customer", phonetic: "/ˈkʌs.tə.mər/", pos: "Noun (اسم)", ar: "زبون / عميل", exEn: "The customer wants to buy a jacket.", exAr: "الزبون يريد شراء سترة." },
+              { en: "Expensive", phonetic: "/ɪkˈspen.sɪv/", pos: "Adjective (صفة)", ar: "غالي الثمن", exEn: "This watch is very expensive.", exAr: "هذه الساعة غالية الثمن جداً." },
+              { en: "Receipt", phonetic: "/rɪˈsiːt/", pos: "Noun (اسم)", ar: "إيصال دفع / فاتورة", exEn: "Can I have the receipt, please?", exAr: "هل يمكنني الحصول على الإيصال من فضلك؟" },
+              { en: "Discount", phonetic: "/ˈdɪs.kaʊnt/", pos: "Noun (اسم)", ar: "خصم / تخفيض", exEn: "There is a big discount today.", exAr: "يوجد خصم كبير اليوم." }
+            ],
+            grammar: {
+              titleAr: "استخدام There is / There are وأدوات الإشارة",
+              titleEn: "There is / There are & Quantifiers",
+              explanationAr: "نستخدم (There is) بمعنى (يوجد للمفرد أو لغير المعدود)، ونستخدم (There are) بمعنى (يوجد للجمع). في حالة السؤال نقدم الفعل المساعد ليصبح (Is there...?) أو (Are there...?).",
+              formulas: [
+                { typeAr: "المفرد (Singular)", ruleEn: "There is + a / an + Singular Noun" },
+                { typeAr: "الجمع (Plural)", ruleEn: "There are + Plural Noun" },
+                { typeAr: "السؤال (Question)", ruleEn: "Is there...? / Are there...?" }
+              ],
+              examples: [
+                { en: "There is a big discount in this store.", ar: "يوجد خصم كبير في هذا المتجر." },
+                { en: "There are many customers today.", ar: "يوجد الكثير من الزبائن اليوم." }
+              ],
+              mistakes: [
+                { wrong: "There is three shops here.", right: "There are three shops here.", reasonAr: "لأن كلمة (three shops) جمع، يجب استخدام There are." }
+              ]
+            },
+            listening: {
+              titleAr: "داخل متجر الملابس",
+              passageEn: "Excuse me, how much is this blue shirt? Is there a discount today? Yes, there is a twenty percent discount for every customer. Here is your receipt.",
+              passageAr: "عفواً، بكم هذا القميص الأزرق؟ هل يوجد خصم اليوم؟ نعم، يوجد خصم عشرين بالمئة لكل زبون. تفضل إيصال الدفع الخاص بك.",
+              questions: [
+                {
+                  qEn: "How much is the discount?",
+                  qAr: "كم تبلغ نسبة الخصم؟",
+                  options: ["10 percent", "20 percent", "50 percent"],
+                  correct: 1
+                }
+              ]
+            },
+            speaking: [
+              { en: "Is there a discount on this jacket", ar: "هل يوجد خصم على هذه السترة" },
+              { en: "Can I have the receipt please", ar: "هل يمكنني أخذ الإيصال من فضلك" }
+            ],
+            writing: {
+              promptAr: "اكتب جملتين أو ثلاث عن متجر زرته مستخدماً قاعدة (There is / There are) والكلمات المطلوبة:",
+              promptEn: "Write 2-3 sentences about a shop using 'There is / There are'.",
+              targetWords: ["discount", "expensive", "customer"],
+              modelAnswerEn: "There is a great clothes shop near my house. The clothes are not expensive, and there is a discount for every customer."
+            },
+            quiz: [
+              {
+                qAr: "اختر الإجابة الصحيحة:",
+                qEn: "_______ a big discount in the supermarket today.",
+                options: ["There are", "There is", "They are", "Are there"],
+                correct: 1,
+                explanationAr: "كلمة (a big discount) مفرد، لذا نستخدم There is."
+              },
+              {
+                qAr: "حرف الـ (p) في كلمة (Receipt) لا يُنطق ومعناها:",
+                qEn: "What does 'Receipt' mean in Arabic?",
+                options: ["وصفة طعام", "إيصال دفع", "زبون", "تخفيض"],
+                correct: 1,
+                explanationAr: "كلمة Receipt تعني إيصال الدفع."
+              }
+            ]
+          }
+        ]
+      },
+
+      A2: {
+        code: "A2",
+        nameAr: "المستوى A2 - مبتدئ متقدم",
+        color: "blue",
+        units: [
+          {
+            id: "a2_u1",
+            titleAr: "الوحدة 1: السفر والتجارب الماضية",
+            titleEn: "Unit 1: Travel & Past Experiences",
+            vocab: [
+              { en: "Luggage", phonetic: "/ˈlʌɡ.ɪdʒ/", pos: "Noun (اسم غير معدود)", ar: "أمتعة السفر / حقائب", exEn: "My luggage arrived safely.", exAr: "وصلت أمتعتي بسلام." },
+              { en: "Destination", phonetic: "/ˌdes.tɪˈneɪ.ʃən/", pos: "Noun (اسم)", ar: "وجهة السفر", exEn: "Aswan was our final destination.", exAr: "كانت أسوان وجهتنا النهائية." },
+              { en: "Reservation", phonetic: "/ˌrez.əˈveɪ.ʃən/", pos: "Noun (اسم)", ar: "حجز مسبق", exEn: "I made a hotel reservation online.", exAr: "قمت بعمل حجز فندقي عبر الإنترنت." },
+              { en: "Flight", phonetic: "/flaɪt/", pos: "Noun (اسم)", ar: "رحلة طيران", exEn: "Our flight departed on time.", exAr: "غادرت رحلتنا الجوية في الموعد المحدد." },
+              { en: "Delayed", phonetic: "/dɪˈleɪd/", pos: "Adjective (صفة)", ar: "متأخر / مؤجل", exEn: "The train was delayed by an hour.", exAr: "تأخر القطار لمدة ساعة." }
+            ],
+            grammar: {
+              titleAr: "الماضي البسيط والماضي المستمر (Past Simple vs. Continuous)",
+              titleEn: "Past Simple & Past Continuous",
+              explanationAr: "نستخدم الماضي البسيط (Past Simple) لحدث بدأ وانتهى في الماضي، بينما نستخدم الماضي المستمر (was/were + verb-ing) لحدث كان مستمراً عندما قطعه حدث آخر قصير في الماضي باستخدام الروابط (when / while).",
+              formulas: [
+                { typeAr: "الماضي البسيط", ruleEn: "Subject + Verb (ed / irregular) | Did not (didn't) + base verb" },
+                { typeAr: "الماضي المستمر", ruleEn: "I/He/She/It + was + V-ing | We/You/They + were + V-ing" },
+                { typeAr: "قاعدة الربط (While / When)", ruleEn: "While + Past Continuous, Past Simple | Past Continuous + when + Past Simple" }
+              ],
+              examples: [
+                { en: "I made a hotel reservation yesterday.", ar: "قمت بعمل حجز فندقي بالأمس." },
+                { en: "While we were waiting at the airport, the flight was delayed.", ar: "بينما كنا ننتظر في المطار، تأخرت رحلة الطيران." },
+                { en: "Did you check your luggage?", ar: "هل قمت بفحص أمتعتك؟" }
+              ],
+              mistakes: [
+                { wrong: "I didn't went to the airport.", right: "I didn't go to the airport.", reasonAr: "بعد didn't يجب أن يعود الفعل إلى المصدر (go) وليس الماضي (went)." },
+                { wrong: "Many luggages were lost.", right: "Much luggage was lost.", reasonAr: "كلمة luggage غير معدودة في الإنجليزية فلا تُجمع ولا تأخذ s." }
+              ]
+            },
+            listening: {
+              titleAr: "رحلة سفر غير متوقعة",
+              passageEn: "Last summer, I traveled to Madrid. Before the trip, I made a hotel reservation online. While I was waiting at the airport, they announced that our flight was delayed for two hours. Fortunately, my luggage arrived safely at my destination.",
+              passageAr: "في الصيف الماضي سافرت إلى مدريد. قبل الرحلة قمت بعمل حجز فندقي عبر الإنترنت. وبينما كنت أنتظر في المطار، أعلنوا أن رحلة الطيران تأخرت لمدة ساعتين. لحسن الحظ، وصلت أمتعتي بسلام إلى وجهتي.",
+              questions: [
+                {
+                  qEn: "What happened while the speaker was waiting at the airport?",
+                  qAr: "ماذا حدث بينما كان المتحدث ينتظر في المطار؟",
+                  options: ["He lost his luggage", "The flight was delayed", "He canceled the reservation"],
+                  correct: 1
+                },
+                {
+                  qEn: "How did he book the hotel?",
+                  qAr: "كيف قام بحجز الفندق؟",
+                  options: ["At the airport", "Online before the trip", "By phone"],
+                  correct: 1
+                }
+              ]
+            },
+            speaking: [
+              { en: "I made a hotel reservation online yesterday", ar: "قمت بعمل حجز فندقي عبر الإنترنت أمس" },
+              { en: "Our flight was delayed while we were waiting", ar: "تأخرت رحلتنا بينما كنا ننتظر" },
+              { en: "My luggage arrived safely at the destination", ar: "وصلت أمتعتي بسلام إلى الوجهة" }
+            ],
+            writing: {
+              promptAr: "اكتب فقرة من 4 جمل تحكي فيها عن رحلة قمت بها في الماضي مستخدماً الماضي البسيط والمستمر والكلمات التالية:",
+              promptEn: "Write a 4-sentence paragraph about a past trip using Past Simple and Past Continuous.",
+              targetWords: ["flight", "reservation", "luggage", "destination"],
+              modelAnswerEn: "Last month, I booked a flight to Alexandria. I made a hotel reservation before leaving. While I was carrying my luggage, I met an old friend. We arrived at our destination in the evening."
+            },
+            quiz: [
+              {
+                qAr: "اختر التصريف الصحيح للفعل بعد While:",
+                qEn: "While I _______ for my flight, I read a book.",
+                options: ["waited", "was waiting", "am waiting", "wait"],
+                correct: 1,
+                explanationAr: "بعد While يأتي زمن الماضي المستمر (was waiting) للتعبير عن الحدث الأطول."
+              },
+              {
+                qAr: "أي الجمل التالية صحيحة نحوياً؟",
+                qEn: "Which sentence is grammatically correct?",
+                options: ["I didn't forgot my luggage.", "I didn't forget my luggage.", "I not forgot my luggage.", "I wasn't forget my luggage."],
+                correct: 1,
+                explanationAr: "في نفي الماضي البسيط نستخدم didn't متبوعة بالفعل في المصدر (forget)."
+              },
+              {
+                qAr: "ما معنى كلمة (Destination)؟",
+                qEn: "What is the meaning of 'Destination'?",
+                options: ["حجز فندقي", "وجهة السفر", "تأخير الرحلة", "حقيبة سفر"],
+                correct: 1,
+                explanationAr: "Destination تعني وجهة السفر أو المكان المقصود."
+              }
+            ]
+          }
+        ]
+      },
+
+      B1: {
+        code: "B1",
+        nameAr: "المستوى B1 - متوسط",
+        color: "purple",
+        units: [
+          {
+            id: "b1_u1",
+            titleAr: "الوحدة 1: بيئة العمل والتطور المهني",
+            titleEn: "Unit 1: Career & Workplace",
+            vocab: [
+              { en: "Experience", phonetic: "/ɪkˈspɪə.ri.əns/", pos: "Noun (اسم)", ar: "خبرة عملية / تجربة", exEn: "She has five years of experience in marketing.", exAr: "لديها خمس سنوات من الخبرة في التسويق." },
+              { en: "Deadline", phonetic: "/ˈded.laɪn/", pos: "Noun (اسم)", ar: "الموعد النهائي للتسليم", exEn: "We have worked hard to meet the deadline.", exAr: "لقد عملنا بجد للالتزام بالموعد النهائي." },
+              { en: "Promote", phonetic: "/prəˈməʊt/", pos: "Verb (فعل)", ar: "يُرقّي في العمل", exEn: "The company promoted him to manager.", exAr: "رقّته الشركة إلى منصب مدير." },
+              { en: "Opportunity", phonetic: "/ˌɒp.əˈtjuː.nə.ti/", pos: "Noun (اسم)", ar: "فرصة سانحة", exEn: "This job is a great opportunity for you.", exAr: "هذه الوظيفة فرصة رائعة لك." },
+              { en: "Colleague", phonetic: "/ˈkɒl.iːɡ/", pos: "Noun (اسم)", ar: "زميل عمل", exEn: "My colleagues have helped me a lot.", exAr: "لقد ساعدني زملائي في العمل كثيراً." }
+            ],
+            grammar: {
+              titleAr: "المضارع التام (Present Perfect) والحالات الشرطية",
+              titleEn: "Present Perfect Tense (Have / Has + P.P.)",
+              explanationAr: "نستخدم زمن المضارع التام (Have/Has + التصريف الثالث للفعل) للربط بين الماضي والحاضر في ثلاث حالات: 1) حدث بدأ في الماضي وما زال مستمراً (مع for و since)، 2) حدث انتهى للتو وله أثر في الحاضر، 3) الحديث عن الخبرات الحياتية دون تحديد وقت دقيق.",
+              formulas: [
+                { typeAr: "القاعدة الأساسية", ruleEn: "I / We / You / They + have + Past Participle (V3) | He / She / It + has + V3" },
+                { typeAr: "الكلمات الدالة", ruleEn: "since (نقطة بداية الزمن) | for (المدة الزمنية الكاملة) | already / yet / ever / never" }
+              ],
+              examples: [
+                { en: "I have worked in this company since 2022.", ar: "أنا أعمل في هذه الشركة منذ عام 2022 (وما زلت أعمل بها)." },
+                { en: "We have already finished the project before the deadline.", ar: "لقد أنهينا المشروع بالفعل قبل الموعد النهائي." },
+                { en: "Has she ever managed a large team?", ar: "هل سبق لها أن أدارت فريقاً كبيراً؟" }
+              ],
+              mistakes: [
+                { wrong: "I have seen him yesterday.", right: "I saw him yesterday.", reasonAr: "لا يجوز استخدام المضارع التام مع كلمة تحدد وقتاً منتهياً في الماضي مثل yesterday؛ بل نستخدم الماضي البسيط." },
+                { wrong: "She works here for five years.", right: "She has worked here for five years.", reasonAr: "عند ذكر مدة استمرت من الماضي للحاضر باستخدام for نستخدم المضارع التام." }
+              ]
+            },
+            listening: {
+              titleAr: "مقابلة ترقية وظيفية",
+              passageEn: "I have worked at this software company for four years. During this time, I have gained valuable experience and collaborated with wonderful colleagues. We have always met every project deadline. Therefore, I believe I am ready for this new opportunity.",
+              passageAr: "لقد عملت في شركة البرمجيات هذه لمدة أربع سنوات. خلال هذا الوقت اكتسبت خبرة قيّمة وتعاونت مع زملاء رائعين. لقد التزمنا دائماً بكل موعد نهائي للمشاريع. لذلك أعتقد أنني مستعد لهذه الفرصة الجديدة.",
+              questions: [
+                {
+                  qEn: "How long has the speaker worked at the company?",
+                  qAr: "منذ متى يعمل المتحدث في الشركة؟",
+                  options: ["Since four o'clock", "For four years", "Four years ago"],
+                  correct: 1
+                },
+                {
+                  qEn: "Why does the speaker feel ready for the new opportunity?",
+                  qAr: "لماذا يشعر المتحدث أنه مستعد للفرصة الجديدة؟",
+                  options: ["Because he gained experience and met every deadline", "Because he just graduated", "Because the deadline was canceled"],
+                  correct: 0
+                }
+              ]
+            },
+            speaking: [
+              { en: "I have gained valuable experience over the last three years", ar: "لقد اكتسبت خبرة قيمة على مدار السنوات الثلاث الماضية" },
+              { en: "My colleagues and I have finished the project before the deadline", ar: "لقد أنهيت أنا وزملائي المشروع قبل الموعد النهائي" }
+            ],
+            writing: {
+              promptAr: "اكتب فقرة (4-5 جمل) تتحدث فيها عن خبراتك المهنية أو الدراسية وما أنجزته حتى الآن باستخدام زمن المضارع التام (have/has + V3):",
+              promptEn: "Write a 4-5 sentence paragraph about your career or study achievements using the Present Perfect tense.",
+              targetWords: ["experience", "deadline", "opportunity", "colleague"],
+              modelAnswerEn: "I have studied computer science for three years, and I have gained great experience. My colleagues and I have completed many projects before the deadline. Now, I am looking for a new opportunity to promote my skills."
+            },
+            quiz: [
+              {
+                qAr: "اختر الكلمة الصحيحة لإكمال الجملة في المضارع التام:",
+                qEn: "She has worked with our team _______ 2021.",
+                options: ["for", "since", "ago", "during"],
+                correct: 1,
+                explanationAr: "مع تحديد سنة بداية الحدث (2021) نستخدم كلمة since."
+              },
+              {
+                qAr: "اختر التصريف الصحيح:",
+                qEn: "We _______ the report before the deadline.",
+                options: ["have submitted", "has submitted", "submitting", "submitted yesterday"],
+                correct: 0,
+                explanationAr: "مع الضمير We نستخدم have متبوعة بالتصريف الثالث للفعل (submitted)."
+              },
+              {
+                qAr: "ما المقصود بكلمة (Deadline) في بيئة العمل؟",
+                qEn: "What does 'Deadline' mean?",
+                options: ["زميل العمل", "الموعد النهائي للتسليم", "ترقية وظيفية", "مقابلة شخصية"],
+                correct: 1,
+                explanationAr: "Deadline تعني آخر موعد مسموح به لتسليم مهمة أو مشروع."
+              }
+            ]
+          }
+        ]
+      },
+
+      B2: {
+        code: "B2",
+        nameAr: "المستوى B2 - متوسط متقدم",
+        color: "amber",
+        units: [
+          {
+            id: "b2_u1",
+            titleAr: "الوحدة 1: التكنولوجيا، التفكير النقدي، والمقالات",
+            titleEn: "Unit 1: Technology, Society & Critical Thinking",
+            vocab: [
+              { en: "Inevitable", phonetic: "/ɪnˈev.ɪ.tə.bəl/", pos: "Adjective (صفة)", ar: "حتمي / لا مفر منه", exEn: "Technological change is inevitable in modern society.", exAr: "التغير التكنولوجي أمر حتمي في المجتمع الحديث." },
+              { en: "Consequence", phonetic: "/ˈkɒn.sɪ.kwəns/", pos: "Noun (اسم)", ar: "عاقبة / نتيجة مترتبة", exEn: "Every decision has long-term consequences.", exAr: "لكل قرار عواقب ونتائج طويلة المدى." },
+              { en: "Enhance", phonetic: "/ɪnˈhɑːns/", pos: "Verb (فعل)", ar: "يُعزّز / يُحسّن جودة", exEn: "Artificial intelligence can enhance productivity.", exAr: "يمكن للذكاء الاصطناعي أن يعزز الإنتاجية." },
+              { en: "Controversial", phonetic: "/ˌkɒn.trəˈvɜː.ʃəl/", pos: "Adjective (صفة)", ar: "مثير للجدل", exEn: "Replacing human workers with robots is a controversial issue.", exAr: "استبدال العمال البشر بالروبوتات قضية مثيرة للجدل." },
+              { en: "Substantial", phonetic: "/səbˈstæn.ʃəl/", pos: "Adjective (صفة)", ar: "جوهري / كبير الحجم أو الأهمية", exEn: "The company made a substantial investment in cybersecurity.", exAr: "قامت الشركة باستثمار جوهري وكبير في الأمن السيبراني." }
+            ],
+            grammar: {
+              titleAr: "المبني للمجهول المتقدم والروابط المنطقية (Passive Voice & Discourse Markers)",
+              titleEn: "Advanced Passive & Contrast Connectors (Despite / Whereas / However)",
+              explanationAr: "في المستوى المتقدم B2، نستخدم المبني للمجهول للكتابة الأكاديمية والرسمية عندما يكون الحدث أهم من الفاعل. كما نستخدم روابط التناقض مثل (Despite / In spite of) ويتبعها اسم أو (Verb+ing)، بينما (Although / Even though) يتبعها جملة كاملة (فاعل + فعل).",
+              formulas: [
+                { typeAr: "المبني للمجهول مع الأفعال الناقصة", ruleEn: "Object + can / must / should + be + Past Participle (V3)" },
+                { typeAr: "روابط التناقض (عبارة اسمية)", ruleEn: "Despite / In spite of + Noun / Gerund (V-ing), Main Clause" },
+                { typeAr: "روابط التناقض (جملة كاملة)", ruleEn: "Although / Even though + Subject + Verb, Main Clause" }
+              ],
+              examples: [
+                { en: "Productivity can be enhanced through smart automation.", ar: "يمكن تعزيز الإنتاجية من خلال الأتمتة الذكية." },
+                { en: "Despite being a controversial topic, AI is widely used today.", ar: "على الرغم من كونه موضوعاً مثيراً للجدل، يُستخدم الذكاء الاصطناعي على نطاق واسع اليوم." },
+                { en: "Substantial progress has been achieved in renewable energy.", ar: "تم تحقيق تقدم جوهري في مجال الطاقة المتجددة." }
+              ],
+              mistakes: [
+                { wrong: "Despite of the rain, we went out.", right: "Despite the rain, we went out. (OR: In spite of the rain)", reasonAr: "كلمة Despite لا يأتي بعدها حرف الجر of أبداً، أما In spite of فيأتي معها of." },
+                { wrong: "The system must updated regularly.", right: "The system must be updated regularly.", reasonAr: "في المبني للمجهول بعد must لا بد من وضع الفعل be قبل التصريف الثالث." }
+              ]
+            },
+            listening: {
+              titleAr: "مقتطف من محاضرة حول تأثير الذكاء الاصطناعي",
+              passageEn: "Rapid technological advancement is inevitable in the twenty-first century. Despite the controversial debate surrounding automation, substantial benefits have been achieved in healthcare and education. However, strict regulations must be implemented to prevent negative consequences and enhance data security.",
+              passageAr: "إن التقدم التكنولوجي السريع أمر حتمي في القرن الحادي والعشرين. وعلى الرغم من النقاش المثير للجدل المحيط بالأتمتة، فقد تم تحقيق فوائد جوهرية في الرعاية الصحية والتعليم. ومع ذلك، يجب تطبيق لوائح صارمة لمنع العواقب السلبية وتعزيز أمن البيانات.",
+              questions: [
+                {
+                  qEn: "According to the speaker, why must strict regulations be implemented?",
+                  qAr: "وفقاً للمتحدث، لماذا يجب تطبيق لوائح صارمة؟",
+                  options: ["To stop healthcare research", "To prevent negative consequences and enhance data security", "To make technology more controversial"],
+                  correct: 1
+                },
+                {
+                  qEn: "In which fields have substantial benefits been achieved?",
+                  qAr: "في أي المجالات تم تحقيق فوائد جوهرية؟",
+                  options: ["Healthcare and education", "Tourism and sports", "Entertainment only"],
+                  correct: 0
+                }
+              ]
+            },
+            speaking: [
+              { en: "Technological change is inevitable in modern society", ar: "التغير التكنولوجي أمر حتمي في المجتمع الحديث" },
+              { en: "Despite being controversial artificial intelligence can enhance productivity", ar: "رغم كونه مثيراً للجدل يمكن للذكاء الاصطناعي تعزيز الإنتاجية" }
+            ],
+            writing: {
+              promptAr: "اكتب فقرة نقاشية (4-6 جمل) لمقال رأي حول فوائد ومخاطر التكنولوجيا الحديثة مستخدماً روابط التناقض (Despite / However) والمبني للمجهول والكلمات المستهدفة:",
+              promptEn: "Write an argumentative paragraph (4-6 sentences) on the impact of modern technology using 'Despite/However' and passive structures.",
+              targetWords: ["inevitable", "enhance", "consequence", "substantial"],
+              modelAnswerEn: "In our modern world, relying on digital technology is inevitable. Substantial improvements have been made in communication and education, which can enhance our daily productivity. However, despite these advantages, serious consequences must be considered if personal privacy is not protected."
+            },
+            quiz: [
+              {
+                qAr: "اختر الرابط الصحيح نحوياً لإكمال الجملة:",
+                qEn: "_______ the substantial cost, the company invested in the new system.",
+                options: ["Although", "Despite", "However", "In spite"],
+                correct: 1,
+                explanationAr: "جاء بعد الفراغ عبارة اسمية (the substantial cost) بدون فعل، لذلك نستخدم Despite."
+              },
+              {
+                qAr: "اختر صيغة المبني للمجهول الصحيحة:",
+                qEn: "Strict security measures must _______ to protect user data.",
+                options: ["implement", "be implemented", "implemented", "being implemented"],
+                correct: 1,
+                explanationAr: "بعد الفعل الناقص must في صيغة المبني للمجهول نستخدم (be + التصريف الثالث)."
+              },
+              {
+                qAr: "ما معنى كلمة (Inevitable)؟",
+                qEn: "What is the accurate Arabic meaning of 'Inevitable'?",
+                options: ["مثير للجدل", "حتمي لا مفر منه", "اختياري", "مؤقت"],
+                correct: 1,
+                explanationAr: "كلمة Inevitable تعني حتمي أو لا مفر من حدوثه."
+              }
+            ]
+          }
+        ]
+      }
+    };
+
+    // ==========================================
+    // 2. APPLICATION STATE & STORAGE
+    // ==========================================
+    let currentLevel = "A1";
+    let currentUnitIndex = 0;
+    let currentTab = "vocab";
+    let vocabViewMode = "cards"; // 'cards' or 'table'
+    let audioSpeed = 1.0;
+    let showListeningTranscript = false;
+    let userProgress = JSON.parse(localStorage.getItem("enAcademyProgress_v1")) || {
+      points: 0,
+      completedQuizzes: {}
+    };
+
+    function saveProgress() {
+      localStorage.setItem("enAcademyProgress_v1", JSON.stringify(userProgress));
+      document.getElementById("userPoints").innerText = userProgress.points;
+    }
+
+    function resetProgress() {
+      if (confirm("هل تريد إعادة ضبط نقاطك وتقدمك من البداية؟")) {
+        userProgress = { points: 0, completedQuizzes: {} };
+        saveProgress();
+        renderAll();
+      }
+    }
+
+    function toggleDarkMode() {
+      const htmlEl = document.documentElement;
+      const icon = document.getElementById("themeIcon");
+      htmlEl.classList.toggle("dark");
+      if (htmlEl.classList.contains("dark")) {
+        icon.className = "fa-solid fa-sun";
+      } else {
+        icon.className = "fa-solid fa-moon";
+      }
+    }
+
+    // ==========================================
+    // 3. TEXT-TO-SPEECH (TTS) ENGINE
+    // ==========================================
+    function speakEnglish(text, rate = 1.0) {
+      if (!('speechSynthesis' in window)) {
+        alert("متصفحك لا يدعم القراءة الصوتية التلقائية.");
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.rate = rate;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeech() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    // ==========================================
+    // 4. UI RENDERING FUNCTIONS
+    // ==========================================
+    function selectLevel(lvl) {
+      stopSpeech();
+      currentLevel = lvl;
+      currentUnitIndex = 0;
+      renderAll();
+    }
+
+    function selectUnit(index) {
+      stopSpeech();
+      currentUnitIndex = index;
+      renderAll();
+    }
+
+    function switchTab(tabName) {
+      stopSpeech();
+      currentTab = tabName;
+      renderModuleTabs();
+      renderModuleContent();
+    }
+
+    function getActiveUnit() {
+      return curriculumData[currentLevel].units[currentUnitIndex];
+    }
+
+    function renderLevelAndUnitBars() {
+      const levelObj = curriculumData[currentLevel];
+      document.getElementById("currentLevelTitle").innerText = levelObj.nameAr;
+
+      // Level Buttons
+      const levels = ["A1", "A2", "B1", "B2"];
+      const lvlContainer = document.getElementById("levelButtonsContainer");
+      lvlContainer.innerHTML = levels.map(lvl => {
+        const isActive = lvl === currentLevel;
+        return `
+          <button onclick="selectLevel('${lvl}')"
+            class="px-4 py-2 rounded-xl font-bold text-sm sm:text-base transition flex items-center justify-center gap-2 ${
+              isActive
+                ? 'bg-white text-indigo-950 shadow-lg scale-105'
+                : 'bg-indigo-800/70 text-indigo-200 hover:bg-indigo-800'
+            }">
+            <span class="en-text font-extrabold">${lvl}</span>
+          </button>
+        `;
+      }).join("");
+
+      // Unit Buttons
+      const unitContainer = document.getElementById("unitButtonsContainer");
+      unitContainer.innerHTML = levelObj.units.map((u, idx) => {
+        const isCurrent = idx === currentUnitIndex;
+        const isDone = userProgress.completedQuizzes[u.id];
+        return `
+          <button onclick="selectUnit(${idx})"
+            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-2 ${
+              isCurrent
+                ? 'bg-amber-400 text-slate-950 shadow'
+                : 'bg-indigo-950/60 text-indigo-200 hover:bg-indigo-950'
+            }">
+            <span>${u.titleAr}</span>
+            ${isDone ? '<i class="fa-solid fa-circle-check text-emerald-500"></i>' : ''}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function renderModuleTabs() {
+      const tabs = ['vocab', 'grammar', 'listening', 'speaking', 'writing', 'quiz'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === currentTab) {
+          btn.className = "module-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition bg-indigo-600 text-white shadow-md scale-[1.02]";
+        } else {
+          btn.className = "module-tab flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100";
+        }
+      });
+    }
+
+    // ==========================================
+    // 5. RENDER EACH OF THE 6 MODULES
+    // ==========================================
+    function renderModuleContent() {
+      const unit = getActiveUnit();
+      const container = document.getElementById("moduleContentArea");
+
+      if (currentTab === "vocab") {
+        renderVocabModule(unit, container);
+      } else if (currentTab === "grammar") {
+        renderGrammarModule(unit, container);
+      } else if (currentTab === "listening") {
+        renderListeningModule(unit, container);
+      } else if (currentTab === "speaking") {
+        renderSpeakingModule(unit, container);
+      } else if (currentTab === "writing") {
+        renderWritingModule(unit, container);
+      } else if (currentTab === "quiz") {
+        renderQuizModule(unit, container);
+      }
+    }
+
+    // --- MODULE 1: VOCABULARY ---
+    function renderVocabModule(unit, container) {
+      const cardsHtml = unit.vocab.map((item, idx) => `
+        <div class="bg-slate-50 dark:bg-slate-700/50 rounded-2xl p-5 border border-slate-200 dark:border-slate-600 flex flex-col justify-between hover:shadow-md transition">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300">${item.pos}</span>
+              <button onclick="speakEnglish('${item.en.replace(/'/g, "\'")}')" class="w-9 h-9 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center shadow transition" title="استمع لنطق الكلمة">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+            <div class="en-text text-2xl font-extrabold text-slate-900 dark:text-white">${item.en}</div>
+            <div class="en-text text-xs text-slate-400 mb-3">${item.phonetic}</div>
+            <div class="text-lg font-bold text-emerald-700 dark:text-emerald-400 mb-4 pb-3 border-b border-slate-200 dark:border-slate-600">${item.ar}</div>
+          </div>
+          <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-700">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <p class="en-text text-sm font-semibold text-slate-800 dark:text-slate-200">${item.exEn}</p>
+              <button onclick="speakEnglish('${item.exEn.replace(/'/g, "\'")}')" class="text-indigo-600 dark:text-indigo-400 hover:scale-110 transition text-sm" title="نطق الجملة">
+                <i class="fa-solid fa-circle-play text-lg"></i>
+              </button>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">${item.exAr}</p>
+          </div>
+        </div>
+      `).join("");
+
+      const tableHtml = `
+        <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full text-sm text-right">
+            <thead class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold">
+              <tr>
+                <th class="p-3.5">الكلمة (English)</th>
+                <th class="p-3.5">النوع</th>
+                <th class="p-3.5">الترجمة بالعربية</th>
+                <th class="p-3.5">مثال تطبيقي مترجم</th>
+                <th class="p-3.5 text-center">النطق</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+              ${unit.vocab.map(item => `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40">
+                  <td class="p-3.5 en-text font-bold text-base text-indigo-700 dark:text-indigo-300">${item.en} <span class="block text-xs font-normal text-slate-400">${item.phonetic}</span></td>
+                  <td class="p-3.5 text-xs">${item.pos}</td>
+                  <td class="p-3.5 font-bold text-emerald-700 dark:text-emerald-400">${item.ar}</td>
+                  <td class="p-3.5">
+                    <div class="en-text font-medium">${item.exEn}</div>
+                    <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${item.exAr}</div>
+                  </td>
+                  <td class="p-3.5 text-center">
+                    <button onclick="speakEnglish('${item.en.replace(/'/g, "\'")}. ${item.exEn.replace(/'/g, "\'")}')" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs hover:bg-indigo-700">
+                      <i class="fa-solid fa-volume-high"></i> استماع
+                    </button>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      container.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-slate-200 dark:border-slate-700">
+          <div>
+            <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">القسم الأول: المفردات المترجمة</span>
+            <h3 class="text-xl font-extrabold mt-0.5">${unit.titleAr} — الكلمات الأساسية</h3>
+          </div>
+          <div class="flex items-center gap-2 self-start">
+            <button onclick="vocabViewMode='cards'; renderModuleContent();" class="px-3.5 py-2 rounded-xl text-xs font-bold transition ${vocabViewMode === 'cards' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}">
+              <i class="fa-solid fa-grip"></i> عرض البطاقات
+            </button>
+            <button onclick="vocabViewMode='table'; renderModuleContent();" class="px-3.5 py-2 rounded-xl text-xs font-bold transition ${vocabViewMode === 'table' ? 'bg-indigo-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}">
+              <i class="fa-solid fa-table-list"></i> عرض الجدول
+            </button>
+          </div>
+        </div>
+        ${vocabViewMode === 'cards' ? `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${cardsHtml}</div>` : tableHtml}
+      `;
+    }
+
+    // --- MODULE 2: GRAMMAR (Bilingual AR/EN) ---
+    function renderGrammarModule(unit, container) {
+      const g = unit.grammar;
+      container.innerHTML = `
+        <div class="pb-5 mb-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">القسم الثاني: شرح القواعد ثنائي اللغة (عربي / إنجليزي)</span>
+            <h3 class="text-xl font-extrabold mt-0.5">${g.titleAr}</h3>
+          </div>
+          <span class="en-text text-sm font-bold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 self-start">${g.titleEn}</span>
+        </div>
+
+        <!-- Arabic Explanation Box -->
+        <div class="bg-amber-50/80 dark:bg-amber-950/30 border-r-4 border-amber-500 p-5 rounded-xl mb-6">
+          <h4 class="font-bold text-amber-900 dark:text-amber-300 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-lightbulb"></i> الشرح المبسط باللغة العربية:
+          </h4>
+          <p class="leading-relaxed text-slate-700 dark:text-slate-200 text-sm sm:text-base">${g.explanationAr}</p>
+        </div>
+
+        <!-- English Formulas -->
+        <h4 class="font-bold text-base mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-code text-indigo-600"></i> تكوين القاعدة بالإنجليزية (Grammar Formulas):
+        </h4>
+        <div class="grid grid-cols-1 gap-3 mb-7">
+          ${g.formulas.map(f => `
+            <div class="bg-slate-900 text-white p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-amber-400 font-bold text-sm">${f.typeAr}:</span>
+              <code class="en-text font-mono text-xs sm:text-sm bg-slate-800 px-3.5 py-2 rounded-lg text-emerald-300 border border-slate-700">${f.ruleEn}</code>
+            </div>
+          `).join("")}
+        </div>
+
+        <!-- Bilingual Examples -->
+        <h4 class="font-bold text-base mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-emerald-600"></i> أمثلة تطبيقية مترجمة باللغتين:
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-7">
+          ${g.examples.map(ex => `
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600 flex items-center justify-between gap-3">
+              <div class="w-full">
+                <p class="en-text font-bold text-indigo-950 dark:text-white text-sm sm:text-base mb-1">${ex.en}</p>
+                <p class="text-xs sm:text-sm text-emerald-700 dark:text-emerald-400 font-medium">${ex.ar}</p>
+              </div>
+              <button onclick="speakEnglish('${ex.en.replace(/'/g, "\'")}')" class="w-9 h-9 shrink-0 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            </div>
+          `).join("")}
+        </div>
+
+        <!-- Common Mistakes -->
+        <h4 class="font-bold text-base mb-3 flex items-center gap-2 text-rose-600 dark:text-rose-400">
+          <i class="fa-solid fa-triangle-exclamation"></i> أخطاء شائعة يجب تجنبها:
+        </h4>
+        <div class="space-y-3">
+          ${g.mistakes.map(m => `
+            <div class="p-4 rounded-xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-800/60">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+                <div class="en-text text-sm text-rose-700 dark:text-rose-400 line-through font-semibold">❌ ${m.wrong}</div>
+                <div class="en-text text-sm text-emerald-700 dark:text-emerald-400 font-bold">✅ ${m.right}</div>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300"><strong>السبب:</strong> ${m.reasonAr}</p>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    // --- MODULE 3: LISTENING ---
+    function renderListeningModule(unit, container) {
+      const l = unit.listening;
+      container.innerHTML = `
+        <div class="pb-5 mb-6 border-b border-slate-200 dark:border-slate-700">
+          <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">القسم الثالث: مهارة الاستماع (Listening)</span>
+          <h3 class="text-xl font-extrabold mt-0.5">${l.titleAr}</h3>
+        </div>
+
+        <!-- Audio Control Box -->
+        <div class="bg-gradient-to-l from-indigo-900 to-slate-900 text-white p-6 rounded-2xl shadow-md mb-6">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <button onclick="speakEnglish('${l.passageEn.replace(/'/g, "\'")}', audioSpeed)"
+                class="px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold flex items-center gap-2 shadow-lg transition">
+                <i class="fa-solid fa-play"></i> تشغيل المقطع الصوتي
+              </button>
+              <button onclick="stopSpeech()"
+                class="px-4 py-3.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-bold flex items-center gap-2 transition">
+                <i class="fa-solid fa-stop"></i> إيقاف
+              </button>
+            </div>
+
+            <!-- Speed Controls -->
+            <div class="flex items-center gap-2 bg-slate-800 p-1.5 rounded-xl">
+              <span class="text-xs px-2 text-slate-300">سرعة الصوت:</span>
+              <button onclick="audioSpeed=0.75; renderModuleContent();" class="px-3 py-1 rounded-lg text-xs font-bold ${audioSpeed===0.75 ? 'bg-amber-400 text-slate-950' : 'text-slate-300'}">0.75x بطيء</button>
+              <button onclick="audioSpeed=1.0; renderModuleContent();" class="px-3 py-1 rounded-lg text-xs font-bold ${audioSpeed===1.0 ? 'bg-amber-400 text-slate-950' : 'text-slate-300'}">1.0x طبيعي</button>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-indigo-800/70 flex items-center justify-between">
+            <span class="text-xs text-indigo-200">استمع جيداً مرة أو مرتين قبل إظهار النص المكتوب والترجمة.</span>
+            <button onclick="showListeningTranscript = !showListeningTranscript; renderModuleContent();"
+              class="text-xs font-bold underline text-amber-300 hover:text-amber-200">
+              ${showListeningTranscript ? 'إخفاء النص والترجمة' : 'إظهار النص الإنجليزي والترجمة العربية'}
+            </button>
+          </div>
+
+          ${showListeningTranscript ? `
+            <div class="mt-4 p-4 rounded-xl bg-slate-800/90 border border-slate-700 space-y-2">
+              <p class="en-text text-sm sm:text-base font-medium text-emerald-300 leading-relaxed">${l.passageEn}</p>
+              <p class="text-xs sm:text-sm text-slate-300 leading-relaxed pt-2 border-t border-slate-700">${l.passageAr}</p>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Listening Comprehension Questions -->
+        <h4 class="font-bold text-base mb-4">أسئلة الفهم والاستيعاب السمعي:</h4>
+        <div class="space-y-4">
+          ${l.questions.map((q, qIdx) => `
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600">
+              <div class="en-text font-bold text-sm sm:text-base mb-1">${qIdx + 1}. ${q.qEn}</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">${q.qAr}</div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                ${q.options.map((opt, oIdx) => `
+                  <button onclick="checkListeningAnswer(${qIdx}, ${oIdx}, ${q.correct}, this)"
+                    class="en-text px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-indigo-500 text-sm font-medium transition">
+                    ${opt}
+                  </button>
+                `).join("")}
+              </div>
+              <div id="listen-feedback-${qIdx}" class="mt-2 text-xs font-bold hidden"></div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function checkListeningAnswer(qIdx, selected, correct, btnEl) {
+      const feedbackEl = document.getElementById(`listen-feedback-${qIdx}`);
+      feedbackEl.classList.remove("hidden");
+      if (selected === correct) {
+        btnEl.className = "en-text px-4 py-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-sm font-bold";
+        feedbackEl.className = "mt-2 text-xs font-bold text-emerald-600";
+        feedbackEl.innerText = "إجابة صحيحة! أحسنت الاستماع.";
+      } else {
+        btnEl.className = "en-text px-4 py-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 text-sm font-bold";
+        feedbackEl.className = "mt-2 text-xs font-bold text-rose-600";
+        feedbackEl.innerText = "إجابة غير صحيحة، حاول الاستماع مرة أخرى.";
+      }
+    }
+
+    // --- MODULE 4: SPEAKING (Web Speech API + Word Accuracy) ---
+    function renderSpeakingModule(unit, container) {
+      container.innerHTML = `
+        <div class="pb-5 mb-6 border-b border-slate-200 dark:border-slate-700">
+          <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">القسم الرابع: تدريب التحدث والنطق (Speaking)</span>
+          <h3 class="text-xl font-extrabold mt-0.5">انطق الجمل التالية بالمايكروفون ليقوم الموقع بتقييم نطقك</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">ملاحظة: استمع أولاً للنطق الصحيح، ثم اضغط على زر (تحدث الآن) أو اكتب الجملة للتجربة إذا كان المايكروفون غير متاح.</p>
+        </div>
+
+        <div class="space-y-5">
+          ${unit.speaking.map((item, idx) => `
+            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                <div>
+                  <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">الجملة رقم ${idx + 1}</span>
+                  <p class="en-text text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white mt-0.5" id="speak-target-${idx}">${item.en}</p>
+                  <p class="text-xs sm:text-sm text-emerald-700 dark:text-emerald-400 font-medium mt-1">${item.ar}</p>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                  <button onclick="speakEnglish('${item.en.replace(/'/g, "\'")}', 0.9)"
+                    class="px-4 py-2.5 rounded-xl bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-200 font-bold text-xs sm:text-sm hover:bg-indigo-200 transition flex items-center gap-2">
+                    <i class="fa-solid fa-volume-high"></i> استمع للنطق
+                  </button>
+                  <button onclick="startSpeechRecognition(${idx}, '${item.en.replace(/'/g, "\'")}')"
+                    id="mic-btn-${idx}"
+                    class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs sm:text-sm shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-microphone"></i> تحدث الآن
+                  </button>
+                </div>
+              </div>
+
+              <!-- Recognition Output Box -->
+              <div id="speak-result-${idx}" class="mt-3 p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm hidden"></div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function startSpeechRecognition(idx, targetSentence) {
+      const resultBox = document.getElementById(`speak-result-${idx}`);
+      const micBtn = document.getElementById(`mic-btn-${idx}`);
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!SpeechRecognition) {
+        const manualInput = prompt("متصفحك الحالي لا يدعم المايكروفون المباشر. اكتب الجملة أو ما نطقته لتجربة مصحح النطق الذكي:", targetSentence);
+        if (manualInput) {
+          evaluateSpokenText(idx, targetSentence, manualInput);
+        }
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      micBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الاستماع...';
+      resultBox.classList.remove("hidden");
+      resultBox.innerHTML = '<span class="text-amber-600 font-bold">انطق الجملة بالإنجليزية الآن...</span>';
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        evaluateSpokenText(idx, targetSentence, transcript);
+      };
+
+      recognition.onerror = () => {
+        micBtn.innerHTML = '<i class="fa-solid fa-microphone"></i> تحدث الآن';
+        resultBox.innerHTML = '<span class="text-rose-600 font-bold">تعذر التقاط الصوت. تأكد من السماح بالمايكروفون أو أن الموقع يعمل عبر رابط https.</span>';
+      };
+
+      recognition.onend = () => {
+        micBtn.innerHTML = '<i class="fa-solid fa-microphone"></i> تحدث الآن';
+      };
+
+      recognition.start();
+    }
+
+    function evaluateSpokenText(idx, targetSentence, spokenText) {
+      const resultBox = document.getElementById(`speak-result-${idx}`);
+      resultBox.classList.remove("hidden");
+
+      const cleanTarget = targetSentence.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().split(/\s+/);
+      const cleanSpoken = spokenText.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().split(/\s+/);
+
+      let matchedCount = 0;
+      const coloredWordsHtml = cleanTarget.map(word => {
+        if (cleanSpoken.includes(word)) {
+          matchedCount++;
+          return `<span class="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold">${word}</span>`;
+        } else {
+          return `<span class="px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 font-bold">${word}</span>`;
+        }
+      }).join(" ");
+
+      const accuracy = Math.round((matchedCount / cleanTarget.length) * 100);
+
+      resultBox.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 mb-2 border-b border-slate-200 dark:border-slate-700">
+          <div>ما التقطه المايكروفون: <strong class="en-text text-indigo-600 dark:text-indigo-400">"${spokenText}"</strong></div>
+          <span class="px-3 py-1 rounded-full text-xs font-extrabold ${accuracy >= 75 ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-slate-950'}">
+            نسبة دقة النطق: ${accuracy}%
+          </span>
+        </div>
+        <div class="text-xs text-slate-500 mb-1">تحليل الكلمات (الأخضر = نطق سليم، الأحمر = تحتاج لإعادتها):</div>
+        <div class="en-text flex flex-wrap gap-1.5 mt-1">${coloredWordsHtml}</div>
+      `;
+    }
+
+    // --- MODULE 5: WRITING ---
+    function renderWritingModule(unit, container) {
+      const w = unit.writing;
+      container.innerHTML = `
+        <div class="pb-5 mb-6 border-b border-slate-200 dark:border-slate-700">
+          <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">القسم الخامس: التدريب على الكتابة (Writing)</span>
+          <h3 class="text-xl font-extrabold mt-0.5">تطبيق الكلمات والقواعد عملياً</h3>
+        </div>
+
+        <div class="bg-indigo-50 dark:bg-indigo-950/40 p-5 rounded-2xl border border-indigo-200 dark:border-indigo-800 mb-5">
+          <p class="font-bold text-slate-800 dark:text-slate-100 mb-1">${w.promptAr}</p>
+          <p class="en-text text-xs sm:text-sm text-indigo-700 dark:text-indigo-300">${w.promptEn}</p>
+
+          <div class="mt-4">
+            <span class="text-xs font-bold block mb-2">الكلمات المطلوب استخدامها في كتابتك (ستتحول للون الأخضر تلقائياً عند كتابتها):</span>
+            <div class="flex flex-wrap gap-2" id="writingTargetChips">
+              ${w.targetWords.map(tw => `
+                <span id="chip-${tw.toLowerCase()}" class="en-text px-3 py-1 rounded-full text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 transition">
+                  ${tw}
+                </span>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+
+        <textarea id="writingTextarea" oninput="analyzeWritingInput()" rows="5"
+          placeholder="Write your sentences in English here..."
+          class="en-text w-full p-4 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:border-indigo-600 focus:outline-none text-base mb-3"></textarea>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <div class="text-xs font-bold text-slate-500">
+            عدد الكلمات المكتوبة: <span id="wordCountSpan" class="text-indigo-600 font-extrabold">0</span> كلمة
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="checkWritingRules()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow transition">
+              <i class="fa-solid fa-spell-check"></i> فحص النص وتقييمه
+            </button>
+            <button onclick="document.getElementById('modelAnswerBox').classList.toggle('hidden')" class="px-4 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm transition">
+              إظهار نموذج إجابة
+            </button>
+          </div>
+        </div>
+
+        <div id="writingFeedbackBox" class="hidden p-4 rounded-xl mb-4 text-sm"></div>
+
+        <div id="modelAnswerBox" class="hidden p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
+          <div class="text-xs font-bold text-emerald-700 dark:text-emerald-400 mb-1">نموذج إجابة مقترح (Model Answer):</div>
+          <p class="en-text text-sm sm:text-base font-medium">${w.modelAnswerEn}</p>
+        </div>
+      `;
+    }
+
+    function analyzeWritingInput() {
+      const unit = getActiveUnit();
+      const text = document.getElementById("writingTextarea").value;
+      const words = text.trim() ? text.trim().split(/\s+/) : [];
+      document.getElementById("wordCountSpan").innerText = words.length;
+
+      const lowerText = text.toLowerCase();
+      unit.writing.targetWords.forEach(tw => {
+        const chip = document.getElementById(`chip-${tw.toLowerCase()}`);
+        if (lowerText.includes(tw.toLowerCase())) {
+          chip.className = "en-text px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-white shadow";
+          chip.innerHTML = `<i class="fa-solid fa-check mr-1"></i> ${tw}`;
+        } else {
+          chip.className = "en-text px-3 py-1 rounded-full text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300";
+          chip.innerText = tw;
+        }
+      });
+    }
+
+    function checkWritingRules() {
+      const unit = getActiveUnit();
+      const text = document.getElementById("writingTextarea").value.trim();
+      const feedbackBox = document.getElementById("writingFeedbackBox");
+      feedbackBox.classList.remove("hidden");
+
+      if (text.length < 15) {
+        feedbackBox.className = "p-4 rounded-xl mb-4 text-sm bg-rose-50 text-rose-700 border border-rose-200 font-bold";
+        feedbackBox.innerText = "النص قصير جداً! حاول كتابة جملتين كاملتين على الأقل.";
+        return;
+      }
+
+      const usedWords = unit.writing.targetWords.filter(tw => text.toLowerCase().includes(tw.toLowerCase()));
+      const startsWithCapital = /^[A-Z]/.test(text);
+      const endsWithPeriod = /[.!?]$/.test(text);
+
+      let notes = [];
+      notes.push(`✅ استخدمت (${usedWords.length} من ${unit.writing.targetWords.length}) من الكلمات المستهدفة في الوحدة.`);
+      if (!startsWithCapital) notes.push("⚠️ تذكر أن تبدأ الجملة الإنجليزية بحرف كبير (Capital Letter).");
+      if (!endsWithPeriod) notes.push("⚠️ لا تنسَ وضع نقطة (.) في نهاية الفقرة.");
+      if (startsWithCapital && endsWithPeriod && usedWords.length >= 2) {
+        notes.push("🌟 كتابة ممتازة ومنظمة! يمكنك أيضاً مقارنة إجابتك بالنموذج الاسترشادي.");
+      }
+
+      feedbackBox.className = "p-4 rounded-xl mb-4 text-sm bg-indigo-50 dark:bg-indigo-950/60 text-slate-800 dark:text-slate-200 border border-indigo-200 space-y-1 font-medium";
+      feedbackBox.innerHTML = notes.map(n => `<div>${n}</div>`).join("");
+    }
+
+    // --- MODULE 6: QUIZ & ASSESSMENT ---
+    function renderQuizModule(unit, container) {
+      container.innerHTML = `
+        <div class="pb-5 mb-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">القسم السادس: الاختبار الشامل للوحدة (Unit Test)</span>
+            <h3 class="text-xl font-extrabold mt-0.5">اختبر مدى إتقانك للكلمات والقواعد</h3>
+          </div>
+          <span class="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-100 text-amber-800">النجاح من 75%</span>
+        </div>
+
+        <form id="quizForm" onsubmit="submitUnitQuiz(event)" class="space-y-5">
+          ${unit.quiz.map((q, qIdx) => `
+            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600">
+              <div class="text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-1">السؤال ${qIdx + 1}: ${q.qAr}</div>
+              <div class="en-text font-extrabold text-base sm:text-lg mb-4">${q.qEn}</div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                ${q.options.map((opt, oIdx) => `
+                  <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 cursor-pointer hover:border-indigo-500 transition">
+                    <input type="radio" name="q_${qIdx}" value="${oIdx}" required class="w-4 h-4 text-indigo-600" />
+                    <span class="font-semibold text-sm">${opt}</span>
+                  </label>
+                `).join("")}
+              </div>
+              <div id="quiz-explain-${qIdx}" class="hidden mt-3 p-3 rounded-xl text-xs font-bold"></div>
+            </div>
+          `).join("")}
+
+          <button type="submit" class="w-full py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-base shadow-lg transition">
+            تصحيح الاختبار وإظهار النتيجة والشرح
+          </button>
+        </form>
+
+        <div id="quizSummaryResult" class="hidden mt-6 p-6 rounded-2xl text-center"></div>
+      `;
+    }
+
+    function submitUnitQuiz(e) {
+      e.preventDefault();
+      const unit = getActiveUnit();
+      const formData = new FormData(e.target);
+      let correctCount = 0;
+
+      unit.quiz.forEach((q, qIdx) => {
+        const userAns = parseInt(formData.get(`q_${qIdx}`));
+        const explainBox = document.getElementById(`quiz-explain-${qIdx}`);
+        explainBox.classList.remove("hidden");
+
+        if (userAns === q.correct) {
+          correctCount++;
+          explainBox.className = "mt-3 p-3 rounded-xl text-xs font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300";
+          explainBox.innerHTML = `✅ إجابة صحيحة! ${q.explanationAr}`;
+        } else {
+          explainBox.className = "mt-3 p-3 rounded-xl text-xs font-bold bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300";
+          explainBox.innerHTML = `❌ إجابة خاطئة. الإجابة الصحيحة هي (${q.options[q.correct]}). — ${q.explanationAr}`;
+        }
+      });
+
+      const scorePercent = Math.round((correctCount / unit.quiz.length) * 100);
+      const summaryBox = document.getElementById("quizSummaryResult");
+      summaryBox.classList.remove("hidden");
+
+      if (scorePercent >= 75) {
+        if (!userProgress.completedQuizzes[unit.id]) {
+          userProgress.completedQuizzes[unit.id] = true;
+          userProgress.points += 50;
+          saveProgress();
+          renderLevelAndUnitBars();
+        }
+        summaryBox.className = "mt-6 p-6 rounded-2xl text-center bg-emerald-600 text-white shadow-lg";
+        summaryBox.innerHTML = `
+          <div class="text-3xl font-extrabold mb-1">🎉 أحسنت! نتيجتك: ${scorePercent}%</div>
+          <p class="text-sm opacity-95">لقد اجتزت اختبار هذه الوحدة بنجاح وحصلت على نقاط التقدم.</p>
+        `;
+      } else {
+        summaryBox.className = "mt-6 p-6 rounded-2xl text-center bg-amber-500 text-slate-950 shadow-lg";
+        summaryBox.innerHTML = `
+          <div class="text-2xl font-extrabold mb-1">نتيجتك: ${scorePercent}%</div>
+          <p class="text-sm font-semibold">راجع الشرح العربي للأخطاء بالأعلى وحاول مرة أخرى للوصول إلى 75% أو أكثر.</p>
+        `;
+      }
+    }
+
+    // ==========================================
+    // 6. INITIALIZATION
+    // ==========================================
+    function renderAll() {
+      document.getElementById("userPoints").innerText = userProgress.points;
+      renderLevelAndUnitBars();
+      renderModuleTabs();
+      renderModuleContent();
+    }
+
+    window.addEventListener("DOMContentLoaded", renderAll);
+  </script>
+</body>
+</html>
